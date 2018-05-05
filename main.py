@@ -3,13 +3,13 @@ from directkeys import PressKey, ReleaseKey
 from findscreen import grab_screen
 import numpy as np
 import pyautogui
-import sklearn.cluster import KMeans
+from sklearn.cluster import KMeans
 import threading
 import time
 
-screen_x_coor = 1520
-screen_y_coor = 792
-SCREEN_BOX = (screen_x_coor, screen_y_coor, screen_x_coor+800, screen_y_coor+600)
+screen_x_coor = 1949
+screen_y_coor = 130
+SCREEN_BOX = (screen_x_coor, screen_y_coor, screen_x_coor+1000, screen_y_coor+554)
 hood_y_coor = 410
 horizon_y = 260
 side_y = 50
@@ -19,10 +19,12 @@ STRAITDIR = 0x11
 RIGHTDIR = 0x20
 LEFTDIR = 0x1E
 
+'''
 VERTICES = np.array([4, horizon_y + side_y],
                     [220, horizon_y], [580, horizon_y],
                     [800, horizon_y + side_y],
                     [800, hood_y_coor], [4, hood_y_coor])
+'''
 
 for i in range(3, 0, -1):
     time.sleep(.4)
@@ -91,27 +93,32 @@ def roi(img, vertices):
 
 
 def processing(orig_img):
+    '''
     # we take original image and do edge detection
     processed_img = cv2.Canny(orig_img, threshold1=100, threshold2=300)
     # cropping out parts of the frame that we are not interested in
     processed_img = roi(processed_img, [VERTICES])
     processed_img = cv2.GaussianBlur(processed_img, (5,5), 0)
     lines = cv2.HoughLinesP(processed_img, 1, np.pi / 180, 180, np.array([]), 120, 20)
-    nlines = np.array([l[0] for l in lines])
+    #nlines = np.array([l[0] for l in lines])
     drawVisualLines(processed_img, nlines)
 
     try:
         # implement KMeans algorithm
-
+        n_lines = np.array([l[0] for l in lines])
+        k_means = KMeans(n_cluster=2, random_state=0).fit(n_lines)
+        drawVisualLines(processed_img, k_means.cluster_centers_)
+    except (ValueError, TypeError) as e:
+        print("KMEANS ERROR: {}".format(e))
     return processed_img
-
+    '''
 def main():
     while True:
         ti = time.time()
         screen = grab_screen(region=SCREEN_BOX)
         cv2.imshow('window', cv2.cvtColor(screen, cv2.COLOR_BGR2RGB))
-        new_screen = processing(screen)
-        cv2.imshow('window2', new_screen)
+        #new_screen = processing(screen)
+        #cv2.imshow('window2', new_screen)
 
         print('{:.2f} FPS'.format(1 / (time.time() - ti)))
         if (cv2.waitKey(25) & 0xFF == ord('q')):
