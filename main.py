@@ -40,9 +40,6 @@ def neural_key_output(keys):
 
     return output
 
-
-
-
 def one_key(key_a, key_b, key_c):
     PressKey(key_a)
     ReleaseKey(key_b)
@@ -144,7 +141,7 @@ def processing(orig_img):
     #drawVisualLines(processed_img, nlines)
 
     try:
-        # implement KMeans algorithm
+        # implement KMeans algorithmdwwww
         n_lines = np.array([l[0] for l in lines])
         k_means = KMeans(n_clusters=2, random_state=0).fit(n_lines)
         drawVisualLines(processed_img, k_means.cluster_centers_)

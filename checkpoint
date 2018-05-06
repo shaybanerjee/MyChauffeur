@@ -1,0 +1,2 @@
+model_checkpoint_path: "C:\\Users\\shayo\\PycharmProjects\\selfDriving\\mychauffeur-0.001-epochs.model"
+all_model_checkpoint_paths: "C:\\Users\\shayo\\PycharmProjects\\selfDriving\\mychauffeur-0.001-epochs.model"
